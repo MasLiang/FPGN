@@ -4,6 +4,14 @@ from popcount_3lut import *
 
 def generate_popcount_compare(rtl_path, module_name, width, threshold):
     lut6_count = math.ceil(width / 6)
+    reg3_count = width//6
+    addition_bit = width-reg3_count*6
+    if addition_bit>1:
+        addition_reg = 2
+    elif addition_bit==0:
+        addition_reg = 0
+    else:
+        addition_reg = 1
     count_width = (width + 1).bit_length()
     width_bits = math.ceil(math.log2(width+1))
     
@@ -17,8 +25,17 @@ def generate_popcount_compare(rtl_path, module_name, width, threshold):
     rtl_code.append("    output data_o  \n")
     rtl_code.append(");\n")
     rtl_code.append("\n")
-    rtl_code.append("wire [2:0] lut6_results [0:"+str(lut6_count)+"-1];\n\n")
-    rtl_code.append("reg [2:0] lut6_results_reg [0:"+str(lut6_count)+"-1];\n\n")
+    rtl_code.append("wire [2:0] lut6_results [0:"+str(lut6_count)+"-1];\n")
+    #rtl_code.append('(* DONT_TOUCH = "yes" *)\n')
+    rtl_code.append('(* MAX_FANOUT = 100 *)\n')
+    rtl_code.append("reg [2:0] lut6_results_reg [0:"+str(reg3_count)+"-1];\n")
+    rtl_code.append("wire [2:0] lut6_results_reg_wire [0:"+str(lut6_count)+"-1];\n")
+    #rtl_code.append('(* DONT_TOUCH = "yes" *)\n')
+    if addition_reg==2:
+        rtl_code.append("reg [1:0] lut6_results_reg_additional;\n")
+    elif addition_reg==1:
+        rtl_code.append("reg lut6_results_reg_additional;\n")
+    rtl_code.append("\n")
     generate_popcount_2lut(rtl_path)
     generate_popcount_3lut(rtl_path)
     for i in range(lut6_count):
@@ -36,13 +53,30 @@ def generate_popcount_compare(rtl_path, module_name, width, threshold):
             rtl_code.append("popcount_3lut u_3lut_"+str(i)+"(.bits({{1'b0, data_i["+str(6*i+4)+":"+str(6*i)+"]}}), .count(lut6_results["+str(i)+"]));\n")
         else:
             rtl_code.append("popcount_3lut u_3lut_"+str(i)+"(.bits(data_i["+str(6*i+5)+":"+str(6*i)+"]), .count(lut6_results["+str(i)+"]));\n")
-    for i in range(lut6_count):
+    for i in range(reg3_count):
         rtl_code.append("always @(posedge clk or negedge rst_n) begin\n")
         rtl_code.append("    if (!rst_n) \n")
         rtl_code.append("        lut6_results_reg["+str(i)+"] <= 3'b0;\n")
         rtl_code.append("    else \n")
         rtl_code.append("        lut6_results_reg["+str(i)+"] <= lut6_results["+str(i)+"];\n")
-        rtl_code.append("end\n\n")
+        rtl_code.append("end\n")
+        rtl_code.append("assign lut6_results_reg_wire["+str(i)+"] = lut6_results_reg["+str(i)+"] ;\n\n")
+    if addition_reg==2:
+        rtl_code.append("always @(posedge clk or negedge rst_n) begin\n")
+        rtl_code.append("    if (!rst_n) \n")
+        rtl_code.append("        lut6_results_reg_additional <= 2'b0;\n")
+        rtl_code.append("    else \n")
+        rtl_code.append("        lut6_results_reg_additional <= lut6_results["+str(reg3_count)+"][1:0];\n")
+        rtl_code.append("end\n")
+        rtl_code.append("assign lut6_results_reg_wire["+str(i+1)+"] = {1'b0,lut6_results_reg_additional};\n\n")
+    elif addition_reg==1:
+        rtl_code.append("always @(posedge clk or negedge rst_n) begin\n")
+        rtl_code.append("    if (!rst_n) \n")
+        rtl_code.append("        lut6_results_reg_additional <= 1'b0;\n")
+        rtl_code.append("    else \n")
+        rtl_code.append("        lut6_results_reg_additional <= lut6_results["+str(reg3_count)+"][0];\n")
+        rtl_code.append("end\n")
+        rtl_code.append("assign lut6_results_reg_wire["+str(i+1)+"] = {2'b0,lut6_results_reg_additional};\n\n")
     
     def generate_adder_tree(elements, level=0, width=64, width_bits=7):
         if elements <= 1:
@@ -54,12 +88,14 @@ def generate_popcount_compare(rtl_path, module_name, width, threshold):
         if level == 0:
             code.append("    wire ["+str(width_bits)+"-1:0] stage"+str(level+1)+" [0:"+str(next_level_elements-1)+"];\n")
             for i in range(elements//2):
-                code.append("assign stage"+str(level+1)+"["+str(i)+"] = {"+str(width_bits-3)+"'b0, lut6_results_reg["+str(2*i)+"]} + ")
-                code.append("{"+str(width_bits-3)+"'b0, lut6_results_reg["+str(2*i+1)+"]};\n")
+                code.append("assign stage"+str(level+1)+"["+str(i)+"] = {"+str(width_bits-3)+"'b0, lut6_results_reg_wire["+str(2*i)+"]} + ")
+                code.append("{"+str(width_bits-3)+"'b0, lut6_results_reg_wire["+str(2*i+1)+"]};\n")
             if elements % 2 == 1:
-                code.append("assign stage"+str(level+1)+"["+str(elements//2)+"] = {"+str(width_bits-2)+"'b0, lut6_results_reg["+str(elements-1)+"]};\n")
+                code.append("assign stage"+str(level+1)+"["+str(elements//2)+"] = {"+str(width_bits-2)+"'b0, lut6_results_reg_wire["+str(elements-1)+"]};\n")
             code.append("\n")
         else:
+            #if next_level_elements<=1:
+            #    code.append('(* DONT_TOUCH = "yes" *)\n')
             code.append("    wire ["+str(width_bits)+"-1:0] stage"+str(level+1)+" [0:"+str(next_level_elements-1)+"];\n")
             for i in range(elements//2):
                 code.append("assign stage"+str(level+1)+"["+str(i)+"] = stage"+str(level)+"["+str(2*i)+"] + stage"+str(level)+"["+str(2*i+1)+"];\n")
@@ -78,7 +114,10 @@ def generate_popcount_compare(rtl_path, module_name, width, threshold):
         all_tree_code.extend(code)
         level += 1
     rtl_code.extend(all_tree_code)
-    rtl_code.append("assign data_o = stage"+str(level)+"[0]>="+str(threshold)+";\n\n")
+    rtl_code.append('(* DONT_TOUCH = "yes" *)\n')
+    rtl_code.append("wire comparison;\n")
+    rtl_code.append("assign comparison = stage"+str(level)+"[0]>="+str(threshold)+";\n")
+    rtl_code.append("assign data_o = comparison;\n\n")
     rtl_code.append("endmodule\n")
 
     with open(rtl_path+"/"+module_name + ".v", "w") as f:

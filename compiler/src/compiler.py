@@ -6,10 +6,12 @@ from solver import heuristic_h_search_best
 from json_parser import json_parser
 
 limit = {
-    "LUT": 2000000,
-    "FF":  4000000
+    "LUT": 2357000,
+    #"LUT": 22408,
+    "FF":  5000000
 }
 json_path = "model_execution_info_6g.json"
+# data = json_parser(json_path)
 data = heuristic_h_search_best(json_path, limit)
 os.system("rm -rf ./verilog")
 os.makedirs("./verilog")

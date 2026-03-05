@@ -34,12 +34,12 @@ def adder_tree(in_num, freq=200):
     while data_num>1:
         adder_num = math.floor(data_num/2)
         lut_num_per_bit = 0
-        if bit_width==3:
-            lut_num_per_bit = 1
-        elif bit_width==4:
-            lut_num_per_bit = 3
-        else:
-            lut_num_per_bit = bit_width
+        #if bit_width==3:
+        #    lut_num_per_bit = 1
+        #elif bit_width==4:
+        #    lut_num_per_bit = 3
+        #else:
+        lut_num_per_bit = bit_width
         lut_num += adder_num*lut_num_per_bit
         data_num = adder_num + data_num%2
         bit_width += 1
@@ -206,13 +206,13 @@ def json_parser(json_path):
                 pct_lut_nums = 0
                 if bit_pct%6>1:
                     pct_lut_nums += (bit_pct//6*3+2)
-                    pct_in_num = lut_num//6+1
+                    pct_in_num = bit_pct//6+1
                 elif bit_pct%6==1:
                     pct_lut_nums += (bit_pct//6*3+1)
-                    pct_in_num = lut_num//6+1
+                    pct_in_num = bit_pct//6+1
                 else:
                     pct_lut_nums += (bit_pct//6*3)
-                    pct_in_num = lut_num//6
+                    pct_in_num = bit_pct//6
                 pct_lut_num, _, _ = adder_tree(pct_in_num, freq=data['freq'])
                 pct_lut_nums += pct_lut_num
                 grp_sum = pct_lut_nums*10

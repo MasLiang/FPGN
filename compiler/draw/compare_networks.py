@@ -69,11 +69,12 @@ ax2 = ax1.twinx()
 x_group1_lines = x[0::2] 
 x_group3_lines = x[1::2] 
 
-line1, = ax2.plot(x_group1_lines, accuracy_group1, label='FPGA-3', marker='o', color=color_group1_line, linestyle='--')
-line2, = ax2.plot(x_group1_lines, accuracy_group2, label='FPGA-3 pruning', marker='x', color=color_group2_line, linestyle='--')
-line3, = ax2.plot(x_group3_lines, accuracy_group3, label='FPGA-6', marker='s', color=color_group3_line, linestyle=':')
-line4, = ax2.plot(x_group3_lines, accuracy_group4, label='FPGA-6 reposition', marker='^', color=color_group4_line, linestyle=':')
-line5, = ax2.plot(x_group3_lines, accuracy_group5, label='FPGA-6 pruning', marker='p', color=color_group5_line, linestyle=':')
+# 绘制四组准确率折线图
+line1, = ax2.plot(x_group1_lines, accuracy_group1, label='FPGN-3', marker='o', color=color_group1_line, linestyle='--')
+line2, = ax2.plot(x_group1_lines, accuracy_group2, label='FPGN-3 pruning', marker='x', color=color_group2_line, linestyle='--')
+line3, = ax2.plot(x_group3_lines, accuracy_group3, label='FPGN-6', marker='s', color=color_group3_line, linestyle=':')
+line4, = ax2.plot(x_group3_lines, accuracy_group4, label='FPGN-6 reposition', marker='^', color=color_group4_line, linestyle=':')
+line5, = ax2.plot(x_group3_lines, accuracy_group5, label='FPGN-6 pruning', marker='p', color=color_group5_line, linestyle=':')
 
 ax2.set_ylabel('Accuracy (%)', fontsize=20)
 ax2.set_ylim(bottom=40, top=85)

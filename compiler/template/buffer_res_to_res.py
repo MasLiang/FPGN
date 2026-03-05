@@ -74,7 +74,8 @@ def generate_buffer_res_to_res(rtl_path,
     port_code.append("    output wire ["+str(channel*stride_size*stride_size*out_kernel_num_row*out_kernel_num_col*in_bit_width)+"-1:0] res_o\n")
     port_code.append(");\n")
     port_code.append("\n")
-    decl_code.append('(* DONT_TOUCH = "yes" *)\n')
+    #decl_code.append('(* DONT_TOUCH = "yes" *)\n')
+    decl_code.append("(* MAX_FANOUT = 100 *)\n")
     decl_code.append("reg ["+str(channel*(1+in_bit_width))+"-1:0] mem_blocks [0:"+str(mem_row)+"-1][0:"+str(mem_col)+"-1];\n")
     decl_code.append("reg ["+str(channel*(1+in_bit_width))+"-1:0] mem_blocks_padding [0:"+str(mem_row)+"-1][0:1];\n")
     if shift_times>1:

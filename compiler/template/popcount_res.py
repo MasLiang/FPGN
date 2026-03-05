@@ -86,3 +86,4 @@ def generate_popcount_res(rtl_path, module_name, width):
         for i in rtl_code:
             f.write(i)
     
+    return level-reg_level-1

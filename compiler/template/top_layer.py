@@ -251,6 +251,7 @@ def generate_rtl(rtl_path, cfg=None):
     lut_num = 2000
     generate_group_sum(rtl_path, "group_sum", lut_num, out_class)
     def_code.append("reg data_i_vld_group_sum;\n")
+    #def_code.append('(* DONT_TOUCH = "yes" *)\n')
     def_code.append("reg ["+str(lut_num)+"-1:0] data_i_group_sum;\n")
 
     logic_code.append("always @(posedge clk or negedge rst_n)\n")

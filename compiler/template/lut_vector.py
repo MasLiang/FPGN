@@ -1,4 +1,5 @@
 import math
+import random
 
 def generate_lut_vector(rtl_path, module_name, lut_num, lut_size, lut_weights, tree_flg=False):
     """
@@ -31,6 +32,11 @@ def generate_lut_vector(rtl_path, module_name, lut_num, lut_size, lut_weights, t
         rtl_code.append("   .I4(data_i["+str(lut_idx)+"*6+4]),\n")
         rtl_code.append("   .I5(data_i["+str(lut_idx)+"*6+5])\n")
         rtl_code.append(");\n")
+        #rtl_code.append("localparam LUT_INIT_"+str(lut_idx)+"=64'h"+lut_weights[lut_idx]+";\n")
+        #rtl_code.append("wire ["+str(lut_size-1)+":0] lut_inputs_"+str(lut_idx)+";\n")
+        #rtl_code.append("assign lut_inputs_"+str(lut_idx)+" = data_i["+str((lut_idx+1)*lut_size-1)+":"+str(lut_idx*lut_size)+"];\n")
+        #rtl_code.append("assign data_o["+str(lut_idx)+"] = LUT_INIT_"+str(lut_idx)+"[lut_inputs_"+str(lut_idx)+"];\n")
+        #rtl_code.append("\n")
             
     rtl_code.append("endmodule\n")
     
