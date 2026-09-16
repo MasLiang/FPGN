@@ -1,0 +1,11 @@
+# Local Git metadata used by the managed workspace.
+.git-work/
+
+# Python-generated files and local training artifacts.
+__pycache__/
+*.py[cod]
+*.pt
+*.pth
+data/
+verilog/
+pareto_curve.png
