@@ -72,7 +72,6 @@ python train.py --epochs 200 --batch-size 200 --test-batch-size 200
 Useful options include:
 
 ```bash
-python train.py --dry-run
 python train.py --epochs 200 --lr 1.0 --gamma 0.5 --seed 1
 ```
 
@@ -149,6 +148,23 @@ For a reproducible experiment, record:
 - FPGA LUT/FF limits and solver settings;
 - Python, PyTorch, CUDA, CVXPY, and Gurobi versions.
 
-## License and citation
+## Citation
 
-No license or citation entry is currently included in this repository. Add the project’s intended license and publication citation here before redistributing the code.
+If you use FPGN in your research, please cite:
+
+> Jiawei Liang, Haotong Qin, Linfeng Du, Xingyu Liu, Shangkun Li, Hui Yu, Michele Magno, Xinyu Chen, Jiang Xu, and Wei Zhang. “FPGN: Redefining Ultra-Fast Programmable Gate-based Neural Acceleration with Differentiable LUTs.” arXiv preprint arXiv:2607.08427, 2026. [arXiv](https://arxiv.org/abs/2607.08427)
+
+```bibtex
+@article{liang2026fpgn,
+  title         = {FPGN: Redefining Ultra-Fast Programmable Gate-based Neural Acceleration with Differentiable LUTs},
+  author        = {Liang, Jiawei and Qin, Haotong and Du, Linfeng and Liu, Xingyu and Li, Shangkun and Yu, Hui and Magno, Michele and Chen, Xinyu and Xu, Jiang and Zhang, Wei},
+  journal       = {arXiv preprint arXiv:2607.08427},
+  year          = {2026},
+  doi           = {10.48550/arXiv.2607.08427},
+  url           = {https://arxiv.org/abs/2607.08427}
+}
+```
+
+## License
+
+No license is currently included in this repository. Add the project’s intended license before redistributing the code.
