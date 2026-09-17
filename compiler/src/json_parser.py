@@ -1,7 +1,6 @@
 import json
 import math
 
-
 def adder_tree(in_num, freq=200):
     period = 1000 / freq
     period_safe = period / 2
